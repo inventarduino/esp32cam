@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camarapp Premium Dashboard</title>
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #030305 0%, #0d0c15 50%, #030305 100%);
+      --panel-bg: rgba(255, 255, 255, 0.02);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --panel-border-focus: rgba(34, 211, 238, 0.3);
+      --neon-cyan: #22d3ee;
+      --neon-purple: #c084fc;
+      --error-red: #ef4444;
+      --success-green: #10b981;
+      --text-main: #ffffff;
+      --text-muted: rgba(255, 255, 255, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Premium Header */
+    header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--panel-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(3, 3, 5, 0.8);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo-container h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      background: linear-gradient(to right, var(--neon-cyan), var(--neon-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-container p {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--neon-cyan);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 0.1rem;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.8rem;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--panel-border);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success-green);
+      box-shadow: 0 0 8px var(--success-green);
+    }
+
+    /* Layout Main Grid */
+    main {
+      flex: 1;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 2rem;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1024px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Video Player Container */
+    .stream-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .stream-viewport {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .stream-viewport img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .stream-placeholder {
+      position: absolute;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .stream-placeholder div {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      animation: pulse 2s infinite;
+    }
+
+    /* Controls Panel */
+    .controls-card {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      backdrop-filter: blur(10px);
+      height: fit-content;
+    }
+
+    .controls-card h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      border-bottom: 1px solid var(--panel-border);
+      padding-bottom: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .control-group label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .control-group label span {
+      color: var(--neon-cyan);
+      font-weight: bold;
+    }
+
+    /* Custom Form Fields */
+    select {
+      width: 100%;
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--panel-border);
+      color: var(--text-main);
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    select:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+    }
+
+    select option {
+      background: #0d0c15;
+      color: var(--text-main);
+    }
+
+    /* Custom Toggles */
+    .toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+    }
+
+    .toggle-row span {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 26px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.1);
+      transition: .4s;
+      border-radius: 34px;
+      border: 1px solid var(--panel-border);
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--neon-cyan);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+      background-color: #000000;
+    }
+
+    /* Custom Ranges (Sliders) */
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.1);
+      outline: none;
+      margin: 10px 0;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--neon-cyan);
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--neon-cyan);
+      transition: transform 0.1s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+    }
+
+    /* Start/Stop Button */
+    .action-btn {
+      width: 100%;
+      padding: 0.9rem;
+      border-radius: 10px;
+      border: none;
+      background: var(--neon-cyan);
+      color: #000;
+      font-weight: 800;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 14px rgba(34, 211, 238, 0.3);
+    }
+
+    .action-btn:hover {
+      background: #06b6d4;
+      box-shadow: 0 4px 20px rgba(34, 211, 238, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .action-btn.active {
+      background: var(--error-red);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+    }
+
+    .action-btn.active:hover {
+      background: #dc2626;
+      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.5);
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 0.8; }
+      100% { opacity: 0.4; }
+    }
+
+    /* Dense Control Cards inside Panel */
+    .dense-card {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--panel-border);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-container">
+      <h1>Camarapp Premium</h1>
+      <p>Cybernetic Console</p>
+    </div>
+    <div class="status-pill">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">ESPERANDO CÁMARA</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Left: Video Stream Viewport -->
+    <div class="stream-card">
+      <div class="stream-viewport">
+        <div class="stream-placeholder" id="stream-placeholder">
+          <div>📡</div>
+          <p>Presiona "INICIAR TRANSMISIÓN" para conectar</p>
+        </div>
+        <img id="stream-img" src="" alt="Stream ESP32-CAM" style="display: none;">
+      </div>
+    </div>
+
+    <!-- Right: Controls -->
+    <div class="controls-card">
+      <h2>Ajustes de Cámara</h2>
+      
+      <button class="action-btn" id="start-btn">INICIAR TRANSMISIÓN</button>
+      
+      <div class="dense-card control-group">
+        <label for="framesize">Resolución</label>
+        <select id="framesize">
+          <option value="13">FHD (1920x1080)</option>
+          <option value="12">UXGA (1600x1200)</option>
+          <option value="11">SXGA (1280x1024)</option>
+          <option value="10">HD (1280x720)</option>
+          <option value="9">XGA (1024x768)</option>
+          <option value="8" selected>SVGA (800x600)</option>
+          <option value="7">VGA (640x480)</option>
+          <option value="6">HVGA (480x320)</option>
+          <option value="4">QVGA (320x240)</option>
+          <option value="0">QQVGA (160x120)</option>
+        </select>
+      </div>
+
+      <div class="dense-card control-group">
+        <label for="led_intensity">Intensidad Flash: <span id="led-val">0</span></label>
+        <input type="range" id="led_intensity" min="0" max="255" value="0">
+      </div>
+
+      <div class="dense-card control-group">
+        <label for="brightness">Brillo: <span id="brightness-val">0</span></label>
+        <input type="range" id="brightness" min="-2" max="2" value="0">
+      </div>
+
+      <div class="dense-card control-group">
+        <label for="contrast">Contraste: <span id="contrast-val">0</span></label>
+        <input type="range" id="contrast" min="-2" max="2" value="0">
+      </div>
+
+      <div class="dense-card">
+        <div class="toggle-row">
+          <span>Voltear Horizontal</span>
+          <label class="switch">
+            <input type="checkbox" id="hmirror">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="dense-card">
+        <div class="toggle-row">
+          <span>Voltear Vertical</span>
+          <label class="switch">
+            <input type="checkbox" id="vflip">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="dense-card">
+        <div class="toggle-row">
+          <span>Auto Balance Blancos</span>
+          <label class="switch">
+            <input type="checkbox" id="awb" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="dense-card control-group">
+        <label for="special_effect">Efectos Especiales</label>
+        <select id="special_effect">
+          <option value="0" selected>Sin Efecto</option>
+          <option value="1">Negativo</option>
+          <option value="2">Escala de Grises</option>
+          <option value="3">Rojo</option>
+          <option value="4">Verde</option>
+          <option value="5">Azul</option>
+          <option value="6">Sepia</option>
+        </select>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const startBtn = document.getElementById('start-btn');
+    const streamImg = document.getElementById('stream-img');
+    const streamPlaceholder = document.getElementById('stream-placeholder');
+    const statusText = document.getElementById('status-text');
+    const statusDot = document.getElementById('status-dot');
+    
+    let isStreaming = false;
+
+    // Toggle Stream
+    startBtn.addEventListener('click', () => {
+      isStreaming = !isStreaming;
+      if (isStreaming) {
+        startBtn.textContent = 'DETENER TRANSMISIÓN';
+        startBtn.classList.add('active');
+        streamPlaceholder.style.display = 'none';
+        streamImg.src = '/stream';
+        streamImg.style.display = 'block';
+        
+        statusText.textContent = 'TRANSMITIENDO';
+        statusDot.style.background = 'var(--neon-cyan)';
+        statusDot.style.boxShadow = '0 0 8px var(--neon-cyan)';
+      } else {
+        startBtn.textContent = 'INICIAR TRANSMISIÓN';
+        startBtn.classList.remove('active');
+        streamImg.style.display = 'none';
+        streamImg.src = '';
+        streamPlaceholder.style.display = 'flex';
+        
+        statusText.textContent = 'CONEXIÓN DETENIDA';
+        statusDot.style.background = 'var(--error-red)';
+        statusDot.style.boxShadow = '0 0 8px var(--error-red)';
+      }
+    });
+
+    // Control updates
+    const sendControl = async (variable, value) => {
+      try {
+        await fetch(`/control?var=${variable}&val=${value}`);
+      } catch (err) {
+        console.error('Error sending control:', err);
+      }
+    };
+
+    // Load initial values from status
+    const loadStatus = async () => {
+      try {
+        const res = await fetch('/status');
+        const status = await res.json();
+        
+        // Sync HTML elements with status values
+        if (status) {
+          document.getElementById('framesize').value = status.framesize;
+          document.getElementById('led_intensity').value = status.led_intensity;
+          document.getElementById('led-val').textContent = status.led_intensity;
+          
+          document.getElementById('brightness').value = status.brightness;
+          document.getElementById('brightness-val').textContent = status.brightness;
+          
+          document.getElementById('contrast').value = status.contrast;
+          document.getElementById('contrast-val').textContent = status.contrast;
+          
+          document.getElementById('hmirror').checked = status.hmirror === 1;
+          document.getElementById('vflip').checked = status.vflip === 1;
+          document.getElementById('awb').checked = status.awb === 1;
+          document.getElementById('special_effect').value = status.special_effect;
+
+          statusText.textContent = 'VIVO';
+          statusDot.style.background = 'var(--success-green)';
+          statusDot.style.boxShadow = '0 0 8px var(--success-green)';
+        }
+      } catch (err) {
+        console.log('Status offline');
+      }
+    };
+
+    // Add Event Listeners for controls
+    document.getElementById('framesize').addEventListener('change', (e) => sendControl('framesize', e.target.value));
+    document.getElementById('special_effect').addEventListener('change', (e) => sendControl('special_effect', e.target.value));
+    
+    document.getElementById('hmirror').addEventListener('change', (e) => sendControl('hmirror', e.target.checked ? 1 : 0));
+    document.getElementById('vflip').addEventListener('change', (e) => sendControl('vflip', e.target.checked ? 1 : 0));
+    document.getElementById('awb').addEventListener('change', (e) => sendControl('awb', e.target.checked ? 1 : 0));
+
+    const bindSlider = (id, valId, variable) => {
+      const slider = document.getElementById(id);
+      const val = document.getElementById(valId);
+      slider.addEventListener('input', (e) => {
+        val.textContent = e.target.value;
+      });
+      slider.addEventListener('change', (e) => {
+        sendControl(variable, e.target.value);
+      });
+    };
+
+    bindSlider('led_intensity', 'led-val', 'led_intensity');
+    bindSlider('brightness', 'brightness-val', 'brightness');
+    bindSlider('contrast', 'contrast-val', 'contrast');
+
+    // Poll status periodically (every 5 seconds) to keep UI synced
+    loadStatus();
+    setInterval(loadStatus, 5000);
+  </script>
+</body>
+</html>
