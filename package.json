@@ -1,0 +1,16 @@
+{
+  "name": "esp32-cam-cloud-server",
+  "version": "1.0.0",
+  "description": "Intermediate server to stream ESP32-CAM video over the internet",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.16.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
